@@ -167,7 +167,42 @@ meta_keywords = models.CharField()
 
 ## 🚀 Deployment
 
-### Railway (Recommended for this project)
+### Docker Deployment (Recommended) 🐳
+
+#### Local Docker Testing
+```bash
+# Build and run with Docker
+docker build -t guestflow-backend .
+docker run -p 8000:8000 --env-file .env guestflow-backend
+
+# Or use Docker Compose
+docker-compose up --build
+```
+
+#### Railway with Docker
+
+1. **Push to GitHub** (already done)
+   ```bash
+   git add .
+   git commit -m "Add Docker configuration for deployment"
+   git push origin main
+   ```
+
+2. **Deploy to Railway**
+   - Railway will automatically detect `Dockerfile` and `railway.toml`
+   - Uses Docker build instead of Nixpacks (faster, more reliable)
+   - Health check at `/health/` endpoint
+   - Auto-restart on failure
+
+3. **Environment Variables** (same as before)
+   ```env
+   SECRET_KEY=your-production-secret-key
+   DEBUG=False
+   ALLOWED_HOSTS=*.railway.app,yourdomain.com,*.yourdomain.com
+   # ... other variables
+   ```
+
+### Alternative: Railway (Nixpacks)
 
 1. **Push to GitHub**
    ```bash
