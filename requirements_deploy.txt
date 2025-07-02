@@ -1,0 +1,14 @@
+Django==5.2.3
+djangorestframework==3.16.0
+django-cors-headers==4.7.0
+mongoengine==0.29.1
+python-decouple==3.8
+dj-database-url==3.0.1
+whitenoise==6.9.0
+Pillow==10.3.0
+pymongo==4.13.2
+dnspython==2.7.0
+gunicorn==21.2.0
+psycopg2-binary==2.9.9
+requests==2.31.0
+firebase-admin==6.9.0
