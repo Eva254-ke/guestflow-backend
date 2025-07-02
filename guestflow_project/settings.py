@@ -87,35 +87,48 @@ MONGODB_SETTINGS = {
 MONGODB_URI = config('MONGODB_URI', default=None)
 MONGODB_NAME = config('MONGODB_NAME', default='guestflow')
 
-if MONGODB_URI:
-    # Production MongoDB Atlas
-    try:
-        mongoengine.connect(
-            db=MONGODB_NAME,
-            host=MONGODB_URI,
-            alias='default',
-            serverSelectionTimeoutMS=5000,
-            connectTimeoutMS=20000,
-            socketTimeoutMS=20000,
-            maxPoolSize=10,
-            minPoolSize=1,
-        )
-        print("✅ Connected to MongoDB Atlas")
-    except Exception as e:
-        print(f"❌ MongoDB Atlas connection failed: {e}")
-else:
-    # Development - try local MongoDB
-    try:
-        mongoengine.connect(
-            db=MONGODB_NAME,
-            host='localhost',
-            port=27017,
-            alias='default'
-        )
-        print("✅ Connected to local MongoDB")
-    except Exception as e:
-        print(f"⚠️  Local MongoDB not available: {e}")
-        print("📝 Using Django ORM only for now")
+def initialize_mongodb():
+    """Initialize MongoDB connection safely"""
+    if MONGODB_URI:
+        # Production MongoDB Atlas
+        try:
+            mongoengine.connect(
+                db=MONGODB_NAME,
+                host=MONGODB_URI,
+                alias='default',
+                serverSelectionTimeoutMS=5000,
+                connectTimeoutMS=20000,
+                socketTimeoutMS=20000,
+                maxPoolSize=10,
+                minPoolSize=1,
+            )
+            print("✅ Connected to MongoDB Atlas")
+            return True
+        except Exception as e:
+            print(f"❌ MongoDB Atlas connection failed: {e}")
+            return False
+    else:
+        # Development - try local MongoDB
+        try:
+            mongoengine.connect(
+                db=MONGODB_NAME,
+                host='localhost',
+                port=27017,
+                alias='default'
+            )
+            print("✅ Connected to local MongoDB")
+            return True
+        except Exception as e:
+            print(f"⚠️  Local MongoDB not available: {e}")
+            print("📝 Using Django ORM only for now")
+            return False
+
+# Initialize MongoDB connection
+try:
+    initialize_mongodb()
+except Exception as e:
+    print(f"⚠️  MongoDB initialization failed: {e}")
+    print("📝 Continuing without MongoDB connection")
 
 # Custom User Model
 AUTH_USER_MODEL = 'users.CustomUser'
@@ -145,8 +158,15 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'mediafiles'
 
-# Whitenoise configuration for static files
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Storage configuration for Django 5.x
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+}
 
 # CORS Configuration
 CORS_ALLOWED_ORIGINS = config(
