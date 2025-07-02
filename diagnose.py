@@ -6,6 +6,16 @@ import os
 import django
 from django.conf import settings
 
+# Load .env file if it exists
+try:
+    from decouple import config
+    # This will load the .env file
+    SECRET_KEY = config('SECRET_KEY', default='NOT SET')
+    DEBUG = config('DEBUG', default=False, cast=bool)
+    print("✅ .env file loaded successfully")
+except Exception as e:
+    print(f"⚠️  Could not load .env file: {e}")
+
 # Set up Django environment
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'guestflow_project.settings')
 django.setup()
@@ -94,6 +104,7 @@ def check_admin_site():
 def check_environment():
     """Check environment variables"""
     print("\n📋 Environment Variables:")
+    from decouple import config
     env_vars = [
         'SECRET_KEY', 'DEBUG', 'ALLOWED_HOSTS',
         'MONGODB_URI', 'MONGODB_NAME'
@@ -101,11 +112,19 @@ def check_environment():
     
     all_good = True
     for var in env_vars:
-        value = os.environ.get(var, 'NOT SET')
-        if var == 'SECRET_KEY' and value != 'NOT SET':
-            value = value[:10] + '...' if len(value) > 10 else value
-        print(f"  {var}: {value}")
-        if value == 'NOT SET':
+        try:
+            if var == 'DEBUG':
+                value = config(var, default='NOT SET', cast=bool)
+            else:
+                value = config(var, default='NOT SET')
+            
+            if var == 'SECRET_KEY' and value != 'NOT SET':
+                value = value[:10] + '...' if len(str(value)) > 10 else str(value)
+            print(f"  {var}: {value}")
+            if value == 'NOT SET':
+                all_good = False
+        except Exception as e:
+            print(f"  {var}: ERROR - {e}")
             all_good = False
     
     return all_good
