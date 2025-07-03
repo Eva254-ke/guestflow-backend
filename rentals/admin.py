@@ -181,10 +181,12 @@ class RoomAvailabilityAdmin(HotelScopedAdmin):
 # Legacy Rental model admin
 @admin.register(Rental)
 class RentalAdmin(HotelScopedAdmin):
-    list_display = ['title', 'get_hotel', 'owner', 'price_per_night', 'location', 'is_available']
+    list_display = ['title', 'slug', 'get_hotel', 'owner', 'price_per_night', 'location', 'is_available']
     list_filter = ['hotel', 'is_available']
-    search_fields = ['title', 'description', 'location']
-    
+    search_fields = ['title', 'description', 'location', 'slug']
+    fields = ('title', 'slug', 'hotel', 'owner', 'description', 'price_per_night', 'location', 'is_available', 'created_at')
+    readonly_fields = ('created_at',)
+
     def get_hotel(self, obj):
         return obj.hotel.name if obj.hotel else "No Hotel"
     get_hotel.short_description = 'Hotel'
