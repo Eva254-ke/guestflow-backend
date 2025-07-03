@@ -48,6 +48,7 @@ class Room(models.Model):
     # Basic Information
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name='rooms')
+    rental = models.ForeignKey('Rental', on_delete=models.CASCADE, related_name='rooms', null=True, blank=True, help_text="Rental this room belongs to")
     name = models.CharField(max_length=200, help_text="Room name/number")
     room_type = models.CharField(max_length=20, choices=ROOM_TYPES, help_text="Type of room")
     
