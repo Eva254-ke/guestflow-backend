@@ -52,9 +52,9 @@ class RoomListAPIView(APIView):
                         price_breakdown.append({'date': str(day), 'price': float(room.base_price)})
                 # Add fees and taxes using Decimal
                 fees = list(room.fees.values('name', 'amount'))
-                taxes = list(room.taxes.values('name', 'amount'))
+                taxes = list(room.taxes.values('name', 'rate'))
                 fees_total = sum(Decimal(str(f['amount'])) for f in fees)
-                taxes_total = sum(Decimal(str(t['amount'])) for t in taxes)
+                taxes_total = sum(Decimal(str(t['rate'])) for t in taxes)
                 total_amount = total_price + fees_total + taxes_total
                 room_data = RoomSerializer(room, context={'request': request}).data
                 room_data['total_price'] = float(total_amount)
