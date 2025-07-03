@@ -33,8 +33,8 @@ class RoomListAPIView(APIView):
         for room in rooms:
             overlapping = Booking.objects.filter(
                 room=room,
-                checkin__lt=checkout_date,
-                checkout__gt=checkin_date,
+                check_in_date__lt=checkout_date,
+                check_out_date__gt=checkin_date,
                 status__in=['pending', 'paid']
             ).exists()
             if not overlapping:
