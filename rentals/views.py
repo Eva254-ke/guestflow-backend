@@ -7,10 +7,12 @@ from .serializers import RoomSerializer
 from bookings.models import Booking, DailyRoomPrice
 from datetime import datetime, timedelta
 from decimal import Decimal
+from rest_framework.permissions import AllowAny
 
 # Any logic using PriceOverride should be migrated to use DailyRoomPrice from bookings.models
 
 class RoomListAPIView(APIView):
+    permission_classes = [AllowAny]
     def get(self, request, slug):
         checkin = request.GET.get('checkin')
         checkout = request.GET.get('checkout')
