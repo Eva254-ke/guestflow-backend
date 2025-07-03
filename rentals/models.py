@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from users.models import Hotel, CustomUser
+from django.utils.text import slugify
 import uuid
 
 class Room(models.Model):
@@ -216,7 +217,6 @@ class RoomAvailability(models.Model):
     def __str__(self):
         return f"{self.room.name} - {self.date} ({self.get_status_display()})"
 
-# Keep existing Rental model for backward compatibility
 class Rental(models.Model):
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name='rentals')
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -226,6 +226,12 @@ class Rental(models.Model):
     location = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
     is_available = models.BooleanField(default=True)
+    slug = models.SlugField(unique=True, blank=True)
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
     
     def __str__(self):
         return f"{self.title} - ${self.price_per_night}/night"
