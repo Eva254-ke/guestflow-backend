@@ -276,3 +276,4 @@ from django.db import models
 admin.site.site_header = "GuestFlow Administration"
 admin.site.site_title = "GuestFlow Admin"
 admin.site.index_title = "Welcome to GuestFlow Administration"
+admin.site.register(CustomUser, CustomUserAdmin)
