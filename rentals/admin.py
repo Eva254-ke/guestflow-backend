@@ -41,20 +41,20 @@ class RoomTaxInline(admin.TabularInline):
 @admin.register(Room)
 class RoomAdmin(HotelScopedAdmin):
     list_display = [
-        'name', 'get_hotel', 'room_type', 'max_occupancy', 
+        'name', 'get_hotel', 'get_rental', 'room_type', 'max_occupancy', 
         'base_price', 'currency', 'get_availability_badge', 'created_at'
     ]
     list_filter = [
-        'hotel', 'room_type', 'is_available', 'is_active',
+        'hotel', 'rental', 'room_type', 'is_available', 'is_active',
         'bed_type', 'bathroom_type', 'has_wifi', 'has_ac'
     ]
-    search_fields = ['name', 'hotel__name', 'description']
+    search_fields = ['name', 'hotel__name', 'rental__title', 'description']
     readonly_fields = ['id', 'created_at', 'updated_at']
     inlines = [RoomImageInline, RoomPricingInline, RoomFeeInline, RoomTaxInline]
     
     fieldsets = (
         ('Basic Information', {
-            'fields': ('id', 'hotel', 'name', 'room_type', 'description', 'short_description')
+            'fields': ('id', 'hotel', 'rental', 'name', 'room_type', 'description', 'short_description')
         }),
         ('Capacity', {
             'fields': ('max_occupancy', 'adults', 'children', 'infants')
@@ -88,6 +88,17 @@ class RoomAdmin(HotelScopedAdmin):
         return "No Hotel"
     get_hotel.short_description = 'Hotel'
     get_hotel.admin_order_field = 'hotel__name'
+
+    def get_rental(self, obj):
+        if obj.rental:
+            return format_html(
+                '<a href="{}">{}</a>',
+                reverse('admin:rentals_rental_change', args=[obj.rental.id]),
+                obj.rental.title
+            )
+        return "No Rental"
+    get_rental.short_description = 'Rental'
+    get_rental.admin_order_field = 'rental__title'
     
     def get_availability_badge(self, obj):
         if obj.is_available and obj.is_active:
@@ -109,6 +120,12 @@ class RoomAdmin(HotelScopedAdmin):
             if not (request.user.is_superuser or getattr(request.user, 'role', None) == 'super_admin'):
                 if hasattr(request.user, 'hotel') and request.user.hotel:
                     kwargs["queryset"] = request.user.hotel.__class__.objects.filter(id=request.user.hotel.id)
+        if db_field.name == "rental":
+            if not (request.user.is_superuser or getattr(request.user, 'role', None) == 'super_admin'):
+                if hasattr(request.user, 'hotel') and request.user.hotel:
+                    from .models import Rental
+                    kwargs["queryset"] = kwargs.get("queryset", None) or Rental.objects.none()
+                    kwargs["queryset"] = kwargs["queryset"].filter(hotel=request.user.hotel)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 @admin.register(RoomImage)
