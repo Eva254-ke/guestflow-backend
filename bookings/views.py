@@ -91,7 +91,7 @@ class DailyRoomPriceListAPIView(APIView):
                     usd_price = float(room.base_price)
                 data = {
                     'id': None,
-                    'room': int(room_id),
+                    'room': room_id,  # Use as string/UUID, do not cast to int
                     'date': day.isoformat(),
                     'price': str(usd_price),  # USD
                     'rate_used': str(rate) if rate else None
