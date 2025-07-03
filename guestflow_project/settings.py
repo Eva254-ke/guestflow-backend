@@ -25,6 +25,8 @@ INSTALLED_APPS = [
     'users',
     'rentals',
     'bookings',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 MIDDLEWARE = [
@@ -156,7 +158,19 @@ STATICFILES_DIRS = [
 
 # Media files configuration
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'mediafiles'
+# MEDIA_ROOT = BASE_DIR / 'mediafiles'
+
+# Cloudinary configuration for media files
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': config('CLOUDINARY_API_KEY'),
+    'API_SECRET': config('CLOUDINARY_API_SECRET'),
+}
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# Optionally, you can comment out or remove MEDIA_ROOT and STORAGES['default'] if you want all media on Cloudinary
+# MEDIA_ROOT = BASE_DIR / 'mediafiles'
+# STORAGES["default"] = {"BACKEND": "django.core.files.storage.FileSystemStorage"}
 
 # Storage configuration for Django 5.x
 STORAGES = {
