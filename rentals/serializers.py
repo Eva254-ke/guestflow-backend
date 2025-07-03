@@ -29,7 +29,7 @@ class RoomFeeSerializer(serializers.ModelSerializer):
 class RoomTaxSerializer(serializers.ModelSerializer):
     class Meta:
         model = RoomTax
-        fields = ['name', 'amount']
+        fields = ['name', 'rate']  # Changed 'amount' to 'rate'
 
 class RoomSerializer(serializers.ModelSerializer):
     images = serializers.SerializerMethodField()
@@ -44,7 +44,7 @@ class RoomSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Room
-        fields = ['id', 'name', 'description', 'base_price', 'capacity', 'images', 'total_price', 'nights', 'features', 'amenities', 'fees', 'taxes', 'rental_slug']
+        fields = ['id', 'name', 'description', 'base_price', 'max_occupancy', 'images', 'total_price', 'nights', 'features', 'amenities', 'fees', 'taxes', 'rental_slug']  # Replaced 'capacity' with 'max_occupancy'
     
     def get_images(self, obj):
         request = self.context.get('request')
