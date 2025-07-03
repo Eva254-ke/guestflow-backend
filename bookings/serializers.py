@@ -14,7 +14,7 @@ class PaymentSerializer(serializers.ModelSerializer):
 class ExchangeRateSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExchangeRate
-        fields = ['id', 'rental', 'rate', 'updated_at']
+        fields = ['id', 'from_currency', 'to_currency', 'rate', 'date']
 
 class DailyRoomPriceSerializer(serializers.ModelSerializer):
     class Meta:

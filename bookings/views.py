@@ -62,11 +62,16 @@ class DailyRoomPriceListAPIView(APIView):
             room = Room.objects.get(id=room_id)
         except Room.DoesNotExist:
             return Response({'detail': 'Room not found.'}, status=404)
-        # Get the latest exchange rate for the room's rental
+        # Get the latest exchange rate for the room's currency to USD
+        rate = None
         try:
-            exchange_rate = ExchangeRate.objects.get(rental=room.rental)
-            rate = float(exchange_rate.rate)
-        except ExchangeRate.DoesNotExist:
+            exchange_rate = ExchangeRate.objects.filter(
+                from_currency=room.currency, to_currency='USD'
+            ).order_by('-date').first()
+            if exchange_rate:
+                rate = float(exchange_rate.rate)
+        except Exception as e:
+            logger.error(f"Exchange rate lookup failed: {e}")
             rate = None
         # Generate all dates in range
         days = (end - start).days + 1
@@ -78,7 +83,7 @@ class DailyRoomPriceListAPIView(APIView):
                 # Use serializer for existing price
                 data = DailyRoomPriceSerializer(price_obj).data
             else:
-                # Convert base price from KES to USD if rate is available
+                # Convert base price from room.currency to USD if rate is available
                 if rate and rate > 0:
                     usd_price = float(room.base_price) / rate
                     usd_price = round(usd_price, 2)
