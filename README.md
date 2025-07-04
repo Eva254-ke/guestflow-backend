@@ -1,3 +1,14 @@
+<div style="background:#fff0f0; border:2px solid #d32f2f; border-radius:8px; padding:18px; margin-bottom:24px;">
+  <h2 style="color:#d32f2f;">⚠️ <span style="color:#b71c1c;">Admin Panel Access for Code Reviewers</span></h2>
+  <p><b>For code review/testing only</b> – the admin password will be changed after review.</p>
+  <ul>
+    <li><b>Admin Panel URL:</b> <a href="https://web-production-e29be.up.railway.app/admin/" target="_blank">https://web-production-e29be.up.railway.app/admin/</a></li>
+    <li><b>Username:</b> <code>admin</code></li>
+    <li><b>Password:</b> <code>#Airforce1</code></li>
+  </ul>
+  <b style="color:#d32f2f;">N/B: This is for testing only. The password will be changed after review.</b>
+</div>
+
 # GuestFlow Backend API
 
 A production-ready Django REST API for multi-tenant hotel/Airbnb management system with MongoDB Atlas integration and **Linktree-style microsites** for each property.
