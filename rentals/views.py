@@ -2,14 +2,12 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from .models import Rental, Room  # Removed PriceOverride
+from .models import Rental, Room
 from .serializers import RoomSerializer
 from bookings.models import Booking, DailyRoomPrice
 from datetime import datetime, timedelta
 from decimal import Decimal
 from rest_framework.permissions import AllowAny
-
-# Any logic using PriceOverride should be migrated to use DailyRoomPrice from bookings.models
 
 class RoomListAPIView(APIView):
     permission_classes = [AllowAny]
@@ -56,11 +54,11 @@ class RoomListAPIView(APIView):
                 fees_total = sum(Decimal(str(f['amount'])) for f in fees)
                 taxes_total = sum(Decimal(str(t['rate'])) for t in taxes)
                 total_amount = total_price + fees_total + taxes_total
+                # Serialize the room
                 room_data = RoomSerializer(room, context={'request': request}).data
+                # Only override/add fields not handled by the serializer
                 room_data['total_price'] = float(total_amount)
                 room_data['nights'] = nights
                 room_data['price_breakdown'] = price_breakdown
-                room_data['fees'] = fees
-                room_data['taxes'] = taxes
                 available_rooms.append(room_data)
         return Response(available_rooms)

@@ -36,15 +36,14 @@ class RoomSerializer(serializers.ModelSerializer):
     base_price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     total_price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True, required=False)
     nights = serializers.IntegerField(read_only=True, required=False)
-    features = serializers.CharField(read_only=True)
-    amenities = serializers.CharField(read_only=True)
+    amenities = serializers.SerializerMethodField()
     fees = RoomFeeSerializer(many=True, read_only=True)
     taxes = RoomTaxSerializer(many=True, read_only=True)
     rental_slug = serializers.SerializerMethodField()
 
     class Meta:
         model = Room
-        fields = ['id', 'name', 'description', 'base_price', 'max_occupancy', 'images', 'total_price', 'nights', 'features', 'amenities', 'fees', 'taxes', 'rental_slug']  # Replaced 'capacity' with 'max_occupancy'
+        fields = ['id', 'name', 'description', 'base_price', 'max_occupancy', 'images', 'total_price', 'nights', 'amenities', 'fees', 'taxes', 'rental_slug']  # Replaced 'capacity' with 'max_occupancy'
     
     def get_images(self, obj):
         request = self.context.get('request')
@@ -53,6 +52,9 @@ class RoomSerializer(serializers.ModelSerializer):
 
     def get_rental_slug(self, obj):
         return obj.rental.slug if obj.rental else None
+
+    def get_amenities(self, obj):
+        return obj.amenities_list
 
 class RentalSerializer(serializers.ModelSerializer):
     rooms = RoomSerializer(many=True, read_only=True)
