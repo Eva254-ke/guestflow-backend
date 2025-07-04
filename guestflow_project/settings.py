@@ -162,9 +162,9 @@ MEDIA_URL = '/media/'
 
 # Cloudinary configuration for media files
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default='dwfp2hhme'),
-    'API_KEY': config('CLOUDINARY_API_KEY', default='dummy'),
-    'API_SECRET': config('CLOUDINARY_API_SECRET', default='dummy'),
+    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME', default=os.environ.get('CLOUDINARY_CLOUD_NAME', 'dwfp2hhme')),
+    'API_KEY': config('CLOUDINARY_API_KEY', default=os.environ.get('CLOUDINARY_API_KEY', 'dummy')),
+    'API_SECRET': config('CLOUDINARY_API_SECRET', default=os.environ.get('CLOUDINARY_API_SECRET', 'dummy')),
 }
 
 # Storage configuration for Django 5.x
