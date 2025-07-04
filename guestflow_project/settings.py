@@ -158,7 +158,7 @@ STATICFILES_DIRS = [
 
 # Media files configuration
 MEDIA_URL = '/media/'
-# MEDIA_ROOT = BASE_DIR / 'mediafiles'
+# MEDIA_ROOT = BASE_DIR / 'mediafiles'  # Not needed with Cloudinary
 
 # Cloudinary configuration for media files
 CLOUDINARY_STORAGE = {
@@ -166,16 +166,11 @@ CLOUDINARY_STORAGE = {
     'API_KEY': config('CLOUDINARY_API_KEY'),
     'API_SECRET': config('CLOUDINARY_API_SECRET'),
 }
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-
-# Optionally, you can comment out or remove MEDIA_ROOT and STORAGES['default'] if you want all media on Cloudinary
-# MEDIA_ROOT = BASE_DIR / 'mediafiles'
-# STORAGES["default"] = {"BACKEND": "django.core.files.storage.FileSystemStorage"}
 
 # Storage configuration for Django 5.x
 STORAGES = {
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
